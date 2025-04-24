@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router'
 export const Menu = () => {
     const location = useLocation()
     const navigate = useNavigate()
-    const pathName = location.pathname
+    const pathName = location.pathname.split('/')[1]
 
     const showMenu = routerInfo.filter((item) => item.path !== pathName)
 
@@ -26,7 +26,7 @@ export const Menu = () => {
                                         onClick={() => navigate(item.path)}
                                     >
                                         <item.icon />
-                                        {item.label}
+                                        {item.path ? item.label : ''}
                                     </Button>
                                     {idx !== showMenu.length - 1 && <ActionBar.Separator />}
                                 </Fragment>
