@@ -1,8 +1,12 @@
+import { useRoute } from '@/hooks/useRoute'
 import { Breadcrumb, Bleed, Box } from '@chakra-ui/react'
 import { LiaSlashSolid } from 'react-icons/lia'
 import { LuHouse } from 'react-icons/lu'
 
 export const HBreadcrumb = () => {
+    const { currentRoute } = useRoute()
+    const pathName = currentRoute?.path
+
     return (
         <Box pb="10">
             <Bleed>
@@ -15,7 +19,7 @@ export const HBreadcrumb = () => {
                             <LiaSlashSolid />
                         </Breadcrumb.Separator>
                         <Breadcrumb.Item>
-                            <Breadcrumb.Link href="pathName">Home</Breadcrumb.Link>
+                            <Breadcrumb.Link href={pathName}>{currentRoute?.label}</Breadcrumb.Link>
                         </Breadcrumb.Item>
                     </Breadcrumb.List>
                 </Breadcrumb.Root>

@@ -1,21 +1,18 @@
 import { ActionBar, Button, Portal, For } from '@chakra-ui/react'
 import { Fragment } from 'react'
-import { routerInfo } from '@/router'
-import { useLocation, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
+import { useRoute } from '@/hooks/useRoute'
 
 export const Menu = () => {
-    const location = useLocation()
+    const { restRoutes } = useRoute()
     const navigate = useNavigate()
-    const pathName = location.pathname.split('/')[1]
-
-    const showMenu = routerInfo.filter((item) => item.path !== pathName)
 
     return (
         <ActionBar.Root open={true} closeOnInteractOutside={false}>
             <Portal>
                 <ActionBar.Positioner>
                     <ActionBar.Content>
-                        <For each={showMenu}>
+                        <For each={restRoutes}>
                             {(item, idx) => (
                                 <Fragment key={item.label}>
                                     <Button
@@ -28,7 +25,7 @@ export const Menu = () => {
                                         <item.icon />
                                         {item.path ? item.label : ''}
                                     </Button>
-                                    {idx !== showMenu.length - 1 && <ActionBar.Separator />}
+                                    {idx !== restRoutes.length - 1 && <ActionBar.Separator />}
                                 </Fragment>
                             )}
                         </For>
