@@ -5,8 +5,13 @@
     --fc-event-text-color: #efefef;
     --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
     --fc-today-bg-color: #d4e2e448;
+    --fc-border-color: #d6d6d6;
 
     font-family: 'Montserrat';
+
+    .fc-multimonth {
+        border-radius: 6px;
+    }
 
     .fc-toolbar-title {
         font-size: 25px;
@@ -29,5 +34,20 @@
             background-size: 20px 20px;
             background-image: url('../assets/images/circle.png');
         }
+    }
+
+    .fc-button {
+        font-size: 14px;
+
+        .fc-icon {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            height: 21px;
+        }
+    }
+
+    .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+        margin-left: 0.5em;
     }
 }
