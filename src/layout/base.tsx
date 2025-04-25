@@ -5,7 +5,7 @@ import { HBreadcrumb } from '@/components/breadcrumb'
 
 const BaseLayout = () => {
     return (
-        <Box padding="10">
+        <Box padding={{ md: '10', base: '4' }} height="100%" width="100%">
             <HBreadcrumb />
             <Outlet />
             <Menu />

@@ -1,0 +1,33 @@
+.fc {
+    --fc-small-font-size: 12px; // event-text-size
+    --fc-event-bg-color: #438d97;
+    --fc-event-border-color: transparent;
+    --fc-event-text-color: #efefef;
+    --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+    --fc-today-bg-color: #d4e2e448;
+
+    font-family: 'Montserrat';
+
+    .fc-toolbar-title {
+        font-size: 25px;
+        font-weight: 500;
+    }
+
+    .fc-col-header-cell-cushion {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .fc-daygrid-day-number {
+        font-size: 12px;
+    }
+
+    .fc-day-today {
+        .fc-daygrid-day-number {
+            background-position: center -1px;
+            background-repeat: no-repeat;
+            background-size: 20px 20px;
+            background-image: url('../assets/images/circle.png');
+        }
+    }
+}

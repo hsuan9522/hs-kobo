@@ -10,7 +10,7 @@ export const Menu = () => {
     return (
         <ActionBar.Root open={true} closeOnInteractOutside={false}>
             <Portal>
-                <ActionBar.Positioner>
+                <ActionBar.Positioner zIndex="1">
                     <ActionBar.Content>
                         <For each={restRoutes}>
                             {(item, idx) => (
