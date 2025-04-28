@@ -2,14 +2,23 @@ import FullCalendar from '@fullcalendar/react'
 import { EventContentArg } from '@fullcalendar/core/index.js'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import dayjs from 'dayjs'
-import { Flex, Text, Group, Input, Button, Box, Icon } from '@chakra-ui/react'
+import {
+    Flex,
+    Text,
+    Button,
+    Box,
+    FileUpload,
+    FileUploadFileChangeDetails,
+    Spinner,
+} from '@chakra-ui/react'
+import { toaster } from '@/components/ui/toaster'
 import { useState } from 'react'
-import { LuX } from 'react-icons/lu'
-import initSqlJs from 'sql.js'
+import { LuUpload } from 'react-icons/lu'
+import initSqlJs, { Database } from 'sql.js'
 
 const Calendar = () => {
-    const [value, setValue] = useState('')
     const [loading, setLoading] = useState(false)
+    const [database, setDatabase] = useState<Database | null>(null)
 
     const events = [
         {
@@ -42,7 +51,6 @@ const Calendar = () => {
     }
 
     const renderEventContent = (eventInfo: EventContentArg) => {
-        console.log(eventInfo)
         return (
             <>
                 <Text textStyle="xs" lineHeight="1" p="2px" truncate>
@@ -52,19 +60,32 @@ const Calendar = () => {
         )
     }
 
-    const submit = async () => {
+    const uploadFile = async (e: FileUploadFileChangeDetails) => {
+        setLoading(true)
         try {
             const SQL = await initSqlJs({
-                locateFile: () => value,
+                locateFile: (file) => `https://sql.js.org/dist/${file}`,
             })
-            const db = new SQL.Database()
-            const stmt = db.prepare('SELECT * FROM Bookmark')
+            const file = e.acceptedFiles[0]
+            const arrayBuffer = await file.arrayBuffer()
+            const unitArray = new Uint8Array(arrayBuffer)
 
-            // Bind values to the parameters and fetch the results of the query
-            // const result = stmt.getAsObject({ ':aval': 1, ':bval': 'world' })
-            // console.log(stmt) // Will print {a:1, b:'world'}
+            const db = new SQL.Database(unitArray)
+            setDatabase(db)
+            const res = db.exec(`
+                SELECT Date, Title, Author,
+                CAST(printf('%.1f', SUM(ReadingTime) / 60.0) AS REAL) AS TotalMinutesRead
+                FROM Analytics
+                GROUP BY Date, Title
+                HAVING TotalMinutesRead >= 1;
+            `)
         } catch (e) {
-            console.log(e)
+            toaster.create({
+                title: `讀取失敗 (${e})`,
+                type: 'error',
+            })
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -79,7 +100,18 @@ const Calendar = () => {
             px={{ md: '20' }}
             mx={{ md: '20' }}
         >
-            <Box position="relative" width={{ md: '60%', base: '100%' }}>
+            <Box w="full">
+                <FileUpload.Root onFileChange={uploadFile} accept={'.sqlite'}>
+                    <FileUpload.HiddenInput />
+                    <FileUpload.Trigger asChild>
+                        <Button variant="outline" size="sm" borderColor="gray.300">
+                            <LuUpload /> Upload file
+                        </Button>
+                    </FileUpload.Trigger>
+                    <FileUpload.List />
+                </FileUpload.Root>
+            </Box>
+            {/* <Box position="relative" width={{ md: '60%', base: '100%' }}>
                 {value && (
                     <Icon
                         position="absolute"
@@ -106,7 +138,8 @@ const Calendar = () => {
                     />
                     <Button onClick={submit}>Submit</Button>
                 </Group>
-            </Box>
+            </Box> */}
+            {loading && <Spinner />}
             <FullCalendar
                 height={'100%'}
                 aspectRatio={1.25}
