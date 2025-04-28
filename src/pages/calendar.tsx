@@ -3,22 +3,24 @@ import { EventContentArg } from '@fullcalendar/core/index.js'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import dayjs from 'dayjs'
 import {
-    Flex,
     Text,
     Button,
     Box,
     FileUpload,
     FileUploadFileChangeDetails,
-    Spinner,
+    HStack,
+    VStack,
 } from '@chakra-ui/react'
 import { toaster } from '@/components/ui/toaster'
 import { useState } from 'react'
 import { LuUpload } from 'react-icons/lu'
 import initSqlJs, { Database } from 'sql.js'
+import { endLoading, startLoading } from '@/store/loading.slice'
+import { useAppDispatch } from '@/hooks/useRedux'
 
 const Calendar = () => {
-    const [loading, setLoading] = useState(false)
     const [database, setDatabase] = useState<Database | null>(null)
+    const dispatch = useAppDispatch()
 
     const events = [
         {
@@ -61,7 +63,7 @@ const Calendar = () => {
     }
 
     const uploadFile = async (e: FileUploadFileChangeDetails) => {
-        setLoading(true)
+        dispatch(startLoading())
         try {
             const SQL = await initSqlJs({
                 locateFile: (file) => `https://sql.js.org/dist/${file}`,
@@ -85,28 +87,26 @@ const Calendar = () => {
                 type: 'error',
             })
         } finally {
-            setLoading(false)
+            dispatch(endLoading())
         }
     }
 
     return (
-        <Flex
-            direction="column"
-            align="center"
-            justify="start"
-            py="4"
-            gap="8"
-            height="90%"
-            px={{ md: '20' }}
-            mx={{ md: '20' }}
-        >
+        <VStack py="4" gap="4" height="90%" px={{ md: '20' }} mx={{ md: '20' }}>
             <Box w="full">
-                <FileUpload.Root onFileChange={uploadFile} accept={'.sqlite'}>
+                <FileUpload.Root
+                    onFileChange={uploadFile}
+                    accept={'.sqlite'}
+                    flexDirection="row"
+                    alignItems="center"
+                >
                     <FileUpload.HiddenInput />
                     <FileUpload.Trigger asChild>
-                        <Button variant="outline" size="sm" borderColor="gray.300">
-                            <LuUpload /> Upload file
-                        </Button>
+                        <HStack h="54px">
+                            <Button variant="outline" size="sm" borderColor="gray.300">
+                                <LuUpload /> Upload file
+                            </Button>
+                        </HStack>
                     </FileUpload.Trigger>
                     <FileUpload.List />
                 </FileUpload.Root>
@@ -139,7 +139,6 @@ const Calendar = () => {
                     <Button onClick={submit}>Submit</Button>
                 </Group>
             </Box> */}
-            {loading && <Spinner />}
             <FullCalendar
                 height={'100%'}
                 aspectRatio={1.25}
@@ -151,7 +150,7 @@ const Calendar = () => {
                 events={events}
                 eventContent={renderEventContent}
             />
-        </Flex>
+        </VStack>
     )
 }
 
