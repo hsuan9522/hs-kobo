@@ -1,7 +1,6 @@
 import FullCalendar from '@fullcalendar/react'
 import { EventContentArg } from '@fullcalendar/core/index.js'
 import multiMonthPlugin from '@fullcalendar/multimonth'
-import dayjs from 'dayjs'
 import {
     Text,
     Button,
@@ -14,36 +13,27 @@ import {
 import { toaster } from '@/components/ui/toaster'
 import { useState } from 'react'
 import { LuUpload } from 'react-icons/lu'
-import initSqlJs, { Database } from 'sql.js'
+import initSqlJs from 'sql.js'
 import { endLoading, startLoading } from '@/store/loading.slice'
 import { useAppDispatch } from '@/hooks/useRedux'
+import { dayjs, getTimeFormat, isOneDayDiff } from '@/utils'
+
+type ReadingInfo = {
+    start: string
+    title: string
+    author: string
+    minutes: number
+    end: string
+    backgroundColor: string
+    borderColor: string
+}
 
 const Calendar = () => {
-    const [database, setDatabase] = useState<Database | null>(null)
     const dispatch = useAppDispatch()
-
-    const events = [
-        {
-            title: '1到時候會是中文字啊',
-            date: dayjs().format('YYYY-MM-DD'),
-        },
-        {
-            title: '2Meeting1',
-            date: dayjs().format('YYYY-MM-DD'),
-        },
-        {
-            title: '3到時候會是中文字啊',
-            date: dayjs().format('YYYY-MM-DD'),
-        },
-        {
-            title: '4Meeting1',
-            date: dayjs().format('YYYY-MM-DD'),
-        },
-        {
-            title: '5Meeting1',
-            date: dayjs().format('YYYY-MM-DD'),
-        },
-    ]
+    const [events, setEvents] = useState<ReadingInfo[]>([])
+    //               ['orange',  'yellow',  'green',   'blue',    'cyan',    'purple',  'red']
+    const bgColors = ['#F6D7C8', '#BAE5D5', '#E2D0EB', '#F8EDD1', '#C4DCF2', '#FBD3D7', '#D8E7F5']
+    const bdrColors = ['#d15700', '#0a5049', '#542a87', '#cb9800', '#183c8c', '#ab1f1f', '#0277a3']
 
     const calendarViews = {
         multiMonthTwoMonth: {
@@ -55,8 +45,10 @@ const Calendar = () => {
     const renderEventContent = (eventInfo: EventContentArg) => {
         return (
             <>
-                <Text textStyle="xs" lineHeight="1" p="2px" truncate>
-                    {eventInfo.event.title}
+                <Text textStyle="2xs" lineHeight="1" p="2px" truncate>
+                    {`${eventInfo.event.title}(${getTimeFormat(
+                        eventInfo.event.extendedProps.minutes
+                    )})`}
                 </Text>
             </>
         )
@@ -73,7 +65,6 @@ const Calendar = () => {
             const unitArray = new Uint8Array(arrayBuffer)
 
             const db = new SQL.Database(unitArray)
-            setDatabase(db)
             const res = db.exec(`
                 SELECT Date, Title, Author,
                 CAST(printf('%.1f', SUM(ReadingTime) / 60.0) AS REAL) AS TotalMinutesRead
@@ -81,6 +72,58 @@ const Calendar = () => {
                 GROUP BY Date, Title
                 HAVING TotalMinutesRead >= 1;
             `)
+
+            let colorIndex = 0
+            const bookColors: Record<string, { color: string; border: string }> = {}
+
+            /**
+             * 0: Date
+             * 1: Title
+             * 2: Author
+             * 3: TotalMinutesRead
+             */
+            const data = res[0].values
+                .reduce((acc, curr) => {
+                    const index = acc?.findLastIndex((item) => item.title === curr[1])
+
+                    const current = {
+                        start: curr[0] as string,
+                        title: curr[1] as string,
+                        author: curr[2] as string,
+                        minutes: curr[3] as number,
+                        end: curr[0] as string,
+                        textColor: '#444444',
+                    }
+
+                    if (index !== -1 && isOneDayDiff(acc[index].end, current.start)) {
+                        acc[index] = {
+                            ...acc[index],
+                            minutes: acc[index].minutes + current.minutes,
+                            end: current.start,
+                        }
+                    } else {
+                        if (!bookColors[current.title]) {
+                            bookColors[current.title] = {
+                                color: bgColors[colorIndex],
+                                border: bdrColors[colorIndex],
+                            }
+                            colorIndex = ++colorIndex % bgColors.length
+                        }
+
+                        acc.push({
+                            ...current,
+                            backgroundColor: bookColors[current.title].color,
+                            borderColor: bookColors[current.title].border,
+                        })
+                    }
+                    return acc
+                }, [] as ReadingInfo[])
+                .map((item) => ({
+                    ...item,
+                    end: dayjs(item.end).add(1, 'day').format('YYYY-MM-DD'),
+                }))
+
+            setEvents(data)
         } catch (e) {
             toaster.create({
                 title: `讀取失敗 (${e})`,
