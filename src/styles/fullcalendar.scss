@@ -1,5 +1,5 @@
 .fc {
-    --fc-small-font-size: 12px; // event-text-size
+    --fc-small-font-size: 0.85em; // event-text-size
     --fc-event-bg-color: #438d97;
     --fc-event-border-color: transparent;
     --fc-event-text-color: #efefef;
@@ -24,7 +24,8 @@
     }
 
     .fc-daygrid-day-number {
-        font-size: 12px;
+        font-size: 0.85em;
+        padding-bottom: 2px;
     }
 
     .fc-day-today {
@@ -49,5 +50,13 @@
 
     .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
         margin-left: 0.5em;
+    }
+
+    .fc-more-link {
+        font-size: 10px;
+    }
+
+    .fc-popover {
+        z-index: 100; // 原本開了 9999，但這會影響 chakra 的 tooltip 顯示
     }
 }

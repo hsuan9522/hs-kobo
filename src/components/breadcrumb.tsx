@@ -8,7 +8,7 @@ export const HBreadcrumb = () => {
     const pathName = currentRoute?.path
 
     return (
-        <Box pb="8">
+        <Box pb={{ xl: '8', base: '4' }}>
             <Bleed>
                 <Breadcrumb.Root>
                     <Breadcrumb.List>

@@ -17,6 +17,7 @@ import initSqlJs from 'sql.js'
 import { endLoading, startLoading } from '@/store/loading.slice'
 import { useAppDispatch } from '@/hooks/useRedux'
 import { dayjs, getTimeFormat, isOneDayDiff } from '@/utils'
+import { Tooltip } from '@/components/ui/tooltip'
 
 type ReadingInfo = {
     start: string
@@ -40,18 +41,6 @@ const Calendar = () => {
             type: 'multiMonth',
             duration: { months: 2 },
         },
-    }
-
-    const renderEventContent = (eventInfo: EventContentArg) => {
-        return (
-            <>
-                <Text textStyle="2xs" lineHeight="1" p="2px" truncate>
-                    {`${eventInfo.event.title}(${getTimeFormat(
-                        eventInfo.event.extendedProps.minutes
-                    )})`}
-                </Text>
-            </>
-        )
     }
 
     const uploadFile = async (e: FileUploadFileChangeDetails) => {
@@ -121,6 +110,7 @@ const Calendar = () => {
                 .map((item) => ({
                     ...item,
                     end: dayjs(item.end).add(1, 'day').format('YYYY-MM-DD'),
+                    timeText: getTimeFormat(item.minutes),
                 }))
 
             setEvents(data)
@@ -134,8 +124,29 @@ const Calendar = () => {
         }
     }
 
+    const renderEventContent = (eventInfo: EventContentArg) => {
+        return (
+            <Tooltip
+                content={`${eventInfo.event.extendedProps.author}《 ${eventInfo.event.title} 》 / ${eventInfo.event.extendedProps.timeText}`}
+                showArrow
+                openDelay={100}
+            >
+                <Text textStyle="2xs" lineHeight="1" p="2px" truncate cursor={'default'}>
+                    {`${eventInfo.event.title}(${eventInfo.event.extendedProps.timeText})`}
+                </Text>
+            </Tooltip>
+        )
+    }
+
     return (
-        <VStack py="4" gap="4" flexGrow="1" overflow="hidden" px={{ xl: '20' }} mx={{ xl: '20' }}>
+        <VStack
+            py={{ xl: '4', sm: '0' }}
+            gap="4"
+            flexGrow="1"
+            overflow="hidden"
+            px={{ xl: '20' }}
+            mx={{ xl: '20' }}
+        >
             <Box w="full">
                 <FileUpload.Root
                     onFileChange={uploadFile}
@@ -185,6 +196,7 @@ const Calendar = () => {
             <Box w="full" h="full" flexGrow={1} overflow="hidden">
                 <FullCalendar
                     initialDate={dayjs().subtract(1, 'month').startOf('month').format('YYYY-MM-DD')}
+                    titleFormat={{ month: 'short' }}
                     aspectRatio={1.35}
                     contentHeight={'auto'}
                     plugins={[multiMonthPlugin]}
