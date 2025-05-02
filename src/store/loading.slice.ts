@@ -9,7 +9,7 @@ const initialState: State = {
     loadingCount: 0,
 }
 
-export const loadingSlice = createSlice({
+const loadingSlice = createSlice({
     name: 'loading',
     initialState: initialState,
     reducers: {

@@ -11,27 +11,18 @@ import {
     VStack,
 } from '@chakra-ui/react'
 import { toaster } from '@/components/ui/toaster'
-import { useState } from 'react'
 import { LuUpload } from 'react-icons/lu'
 import initSqlJs from 'sql.js'
 import { endLoading, startLoading } from '@/store/loading.slice'
-import { useAppDispatch } from '@/hooks/useRedux'
+import { setStatistics } from '@/store/statistics.slice'
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import { dayjs, getTimeFormat, isOneDayDiff } from '@/utils'
 import { Tooltip } from '@/components/ui/tooltip'
-
-type ReadingInfo = {
-    start: string
-    title: string
-    author: string
-    minutes: number
-    end: string
-    backgroundColor: string
-    borderColor: string
-}
+import { StatisticsInfo } from '@/store/statistics.slice'
 
 const Calendar = () => {
     const dispatch = useAppDispatch()
-    const [events, setEvents] = useState<ReadingInfo[]>([])
+    const { data: events } = useAppSelector((state) => state.statistics)
     //               ['orange',  'yellow',  'green',   'blue',    'cyan',    'purple',  'red']
     const bgColors = ['#F6D7C8', '#BAE5D5', '#E2D0EB', '#F8EDD1', '#C4DCF2', '#FBD3D7', '#D8E7F5']
     const bdrColors = ['#d15700', '#0a5049', '#542a87', '#cb9800', '#183c8c', '#ab1f1f', '#0277a3']
@@ -106,14 +97,14 @@ const Calendar = () => {
                         })
                     }
                     return acc
-                }, [] as ReadingInfo[])
+                }, [] as StatisticsInfo[])
                 .map((item) => ({
                     ...item,
                     end: dayjs(item.end).add(1, 'day').format('YYYY-MM-DD'),
                     timeText: getTimeFormat(item.minutes),
                 }))
 
-            setEvents(data)
+            dispatch(setStatistics(data))
         } catch (e) {
             toaster.create({
                 title: `讀取失敗 (${e})`,
