@@ -146,6 +146,11 @@ const Calendar = () => {
         })
     }
 
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+    const handleJump = () => {
+        setIsPopoverOpen(!isPopoverOpen)
+    }
+
     return (
         <VStack
             py={{ xl: '4', sm: '0' }}
@@ -202,46 +207,48 @@ const Calendar = () => {
                 </Group>
             </Box> */}
             <Box w="full" h="full" flexGrow={1} overflow="hidden" padding={1}>
-                <FullCalendar
-                    ref={calendarRef}
-                    initialDate={TODAY.subtract(1, 'month').startOf('month').format('YYYY-MM-DD')}
-                    customButtons={{
-                        my: { text: 'Jump' },
-                    }}
-                    headerToolbar={{
-                        right: 'today prev,next my',
-                        left: 'title',
-                    }}
-                    titleFormat={{ month: 'short', year: 'numeric' }}
-                    aspectRatio={1.35}
-                    contentHeight={'auto'}
-                    plugins={[multiMonthPlugin]}
-                    showNonCurrentDates={false}
-                    initialView="multiMonthTwoMonth"
-                    multiMonthMaxColumns={2}
-                    views={calendarViews}
-                    events={events}
-                    eventContent={renderEventContent}
-                />
+                <Box overflow="auto" w="full" h="full">
+                    <FullCalendar
+                        ref={calendarRef}
+                        initialDate={TODAY.subtract(1, 'month')
+                            .startOf('month')
+                            .format('YYYY-MM-DD')}
+                        customButtons={{
+                            my: { text: 'Jump', click: handleJump },
+                        }}
+                        headerToolbar={{
+                            right: 'today prev,next my',
+                            left: 'title',
+                        }}
+                        titleFormat={{ month: 'short', year: 'numeric' }}
+                        aspectRatio={1.35}
+                        contentHeight={'auto'}
+                        plugins={[multiMonthPlugin]}
+                        showNonCurrentDates={false}
+                        initialView="multiMonthTwoMonth"
+                        multiMonthMaxColumns={2}
+                        views={calendarViews}
+                        events={events}
+                        eventContent={renderEventContent}
+                    />
+                </Box>
             </Box>
             <Box
                 position="absolute"
-                w={popoverOffset.width}
+                w="1px"
                 h={popoverOffset.height}
                 left={popoverOffset.left}
                 top={popoverOffset.top}
             >
-                <Popover.Root size="xs" closeOnInteractOutside={true}>
+                <Popover.Root
+                    size="xs"
+                    open={isPopoverOpen}
+                    onInteractOutside={() => {
+                        setIsPopoverOpen(false)
+                    }}
+                >
                     <Popover.Trigger asChild>
-                        <Button
-                            w="full"
-                            h="full"
-                            bg="#2c3e50"
-                            fontWeight="normal"
-                            fontFamily="Montserrat"
-                        >
-                            Jump
-                        </Button>
+                        <Button zIndex={-1}></Button>
                     </Popover.Trigger>
                     <Portal>
                         <Popover.Positioner>
