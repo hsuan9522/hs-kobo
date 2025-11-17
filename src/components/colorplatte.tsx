@@ -9,6 +9,7 @@ export const ColorPlatte = () => {
         <Flex gap="2" pt="4">
             {bgColors.map((bg, idx) => (
                 <Box
+                    key={bg}
                     width="5"
                     height="5"
                     background={bg}
