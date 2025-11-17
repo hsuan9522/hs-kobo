@@ -18,20 +18,24 @@ export interface BookInfo {
     title: string
     author: string
     totalMinutes: number
+    startDate: string
     lastDate: string
     days: number
     color: string
     border: string
+    data: { date: string, minutes: number }[]
 }
 
 interface State {
     data: StatisticsInfo[]
     books: BookInfo[]
+    bookIdMap: Record<string, number>
 }
 
 const initialState: State = {
     data: [],
-    books: []
+    books: [],
+    bookIdMap: {},
 }
 
 export const formatStatistics = createAsyncThunk<State, initSqlJs.SqlValue[][], { state: RootState }>(
@@ -68,16 +72,22 @@ export const formatStatistics = createAsyncThunk<State, initSqlJs.SqlValue[][], 
                             title: current.title,
                             author: current.author,
                             totalMinutes: 0,
+                            startDate: current.start,
                             lastDate: current.end,
                             days: 0,
                             color: bgColors[colorIndex],
                             border: bdrColors[colorIndex],
+                            data: [],
                         }
                         colorIndex = ++colorIndex % bgColors.length
                     }
                     bookInfo[current.title].totalMinutes += current.minutes
                     bookInfo[current.title].lastDate = current.end
                     bookInfo[current.title].days += 1
+                    bookInfo[current.title].data.push({
+                        date: current.start,
+                        minutes: current.minutes,
+                    })
 
                     if (index !== -1 && isOneDayDiff(acc[index].end, current.start)) {
                         acc[index] = {
@@ -101,8 +111,12 @@ export const formatStatistics = createAsyncThunk<State, initSqlJs.SqlValue[][], 
                 }))
 
             const books: BookInfo[] = Object.values(bookInfo)
+            const bookIdMap: Record<string, number> = books.reduce((acc, curr, idx) => {
+                acc[curr['title']] = idx
+                return acc
+            }, {} as Record<string, number>)
 
-            return { data: events, books }
+            return { data: events, books, bookIdMap }
         } catch (e) {
             return rejectWithValue(e)
         } finally {
@@ -125,10 +139,12 @@ const statisticsSlice = createSlice({
             .addCase(formatStatistics.fulfilled, (state, action) => {
                 state.data = action.payload.data
                 state.books = action.payload.books
+                state.bookIdMap = action.payload.bookIdMap
             })
             .addCase(formatStatistics.rejected, (state) => {
                 state.data = []
                 state.books = []
+                state.bookIdMap = {}
             })
     },
 })

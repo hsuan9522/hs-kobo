@@ -1,5 +1,5 @@
 import FullCalendar from '@fullcalendar/react'
-import { EventContentArg } from '@fullcalendar/core/index.js'
+import { EventClickArg, EventContentArg } from '@fullcalendar/core/index.js'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import {
     Text,
@@ -25,6 +25,8 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import { dayjs } from '@/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { useEffect, useRef, useState } from 'react'
+import { BookDrawer } from '@/components/bookDrawer'
+import { ColorPlatte } from '@/components/colorplatte'
 
 const TODAY = dayjs()
 const currentYear = TODAY.year().toString()
@@ -59,6 +61,8 @@ const Calendar = () => {
     const [selectYear, setSelectYear] = useState([currentYear])
     const [selectMonth, setSelectMonth] = useState([currentMonth])
     const isInitial = useRef(true)
+    const [openDrawer, setOpenDrawer] = useState(false)
+    const [selectedTitle, setSelectedTitle] = useState('')
 
     useEffect(() => {
         if (calendarRef.current && events.length) {
@@ -151,6 +155,11 @@ const Calendar = () => {
         setIsPopoverOpen(!isPopoverOpen)
     }
 
+    const eventClick = (el: EventClickArg) => {
+        setOpenDrawer(true)
+        setSelectedTitle(el.event.title)
+    }
+
     return (
         <VStack
             py={{ xl: '4', sm: '0' }}
@@ -177,6 +186,16 @@ const Calendar = () => {
                     </FileUpload.Trigger>
                     <FileUpload.List />
                 </FileUpload.Root>
+                {selectedTitle && (
+                    <BookDrawer
+                        open={openDrawer}
+                        title={selectedTitle}
+                        onClose={() => {
+                            setOpenDrawer(false)
+                        }}
+                    />
+                )}
+                <ColorPlatte></ColorPlatte>
             </Box>
             {/* <Box position="relative" w={{ md: '60%', base: '100%' }}>
                 {value && (
@@ -220,6 +239,7 @@ const Calendar = () => {
                             right: 'today prev,next my',
                             left: 'title',
                         }}
+                        eventClick={eventClick}
                         titleFormat={{ month: 'short', year: 'numeric' }}
                         aspectRatio={1.35}
                         contentHeight={'auto'}
