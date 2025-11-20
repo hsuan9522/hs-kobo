@@ -26,7 +26,6 @@ import { dayjs } from '@/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { useEffect, useRef, useState } from 'react'
 import { BookDrawer } from '@/components/bookDrawer'
-import { ColorPlatte } from '@/components/colorplatte'
 
 const TODAY = dayjs()
 const currentYear = TODAY.year().toString()
@@ -204,7 +203,7 @@ const Calendar = () => {
                         }}
                     />
                 )}
-                <ColorPlatte></ColorPlatte>
+                {/* <ColorPlatte /> */}
             </Box>
             {/* <Box position="relative" w={{ md: '60%', base: '100%' }}>
                 {value && (
