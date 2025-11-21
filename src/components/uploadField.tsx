@@ -1,10 +1,11 @@
 import { useAppDispatch } from '@/hooks/useRedux'
 import { endLoading, startLoading } from '@/store/loading.slice'
 import { formatStatistics, syncNotes } from '@/store/statistics.slice'
-import { FileUpload, HStack, Button, FileUploadFileChangeDetails } from '@chakra-ui/react'
+import { FileUpload, HStack, Button, FileUploadFileChangeDetails, Box } from '@chakra-ui/react'
 import { LuUpload } from 'react-icons/lu'
 import { toaster } from '@/components/ui/toaster'
 import initSqlJs from 'sql.js'
+import { setFile } from '@/store/common.slice'
 
 export const UploadField = ({
     showFile = true,
@@ -44,6 +45,7 @@ export const UploadField = ({
                     ORDER BY Title, DateString ASC
                 `)
             await dispatch(syncNotes(notes[0].values))
+            dispatch(setFile(file.name))
             if (successCallback) successCallback()
         } catch (e) {
             toaster.create({
@@ -56,21 +58,23 @@ export const UploadField = ({
     }
 
     return (
-        <FileUpload.Root
-            onFileChange={uploadFile}
-            accept={'.sqlite'}
-            flexDirection="row"
-            alignItems="center"
-        >
-            <FileUpload.HiddenInput />
-            <FileUpload.Trigger asChild>
-                <HStack h="54px">
-                    <Button variant="outline" size="sm" borderColor="gray.300">
-                        <LuUpload /> Upload file
-                    </Button>
-                </HStack>
-            </FileUpload.Trigger>
-            {showFile ? <FileUpload.List /> : <></>}
-        </FileUpload.Root>
+        <Box>
+            <FileUpload.Root
+                onFileChange={uploadFile}
+                accept={'.sqlite'}
+                flexDirection="row"
+                alignItems="center"
+            >
+                <FileUpload.HiddenInput />
+                <FileUpload.Trigger asChild>
+                    <HStack h="54px">
+                        <Button variant="outline" size="sm" borderColor="gray.300">
+                            <LuUpload /> Upload file
+                        </Button>
+                    </HStack>
+                </FileUpload.Trigger>
+                {showFile ? <FileUpload.List /> : <></>}
+            </FileUpload.Root>
+        </Box>
     )
 }

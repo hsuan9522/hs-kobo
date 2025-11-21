@@ -24,13 +24,20 @@ const initialState = {
         '#0277a3',
         '#2f8f2f',
         '#8A5E3C',
-    ]
+    ],
+    filename: '',
 }
 
 const commonSlice = createSlice({
     name: 'common',
     initialState,
-    reducers: {}
+    reducers: {
+        setFile: (state, action) => {
+            state.filename = action.payload
+        }
+    }
 })
+
+export const { setFile } = commonSlice.actions
 
 export default commonSlice.reducer

@@ -84,6 +84,7 @@ const Calendar = () => {
 
     const renderEventContent = (eventInfo: EventContentArg) => {
         // 會造成 flushSync was called from inside a lifecycle method...
+        // 目前 react 18 以上還是有機會出現，作者說可能會在 v7 中修復
         return (
             <Tooltip
                 content={`${eventInfo.event.extendedProps.author}《 ${eventInfo.event.title} 》 / ${eventInfo.event.extendedProps.timeText}`}
