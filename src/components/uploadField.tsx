@@ -6,7 +6,13 @@ import { LuUpload } from 'react-icons/lu'
 import { toaster } from '@/components/ui/toaster'
 import initSqlJs from 'sql.js'
 
-export const UploadField = ({ showFile = true }: { showFile?: boolean }) => {
+export const UploadField = ({
+    showFile = true,
+    successCallback,
+}: {
+    showFile?: boolean
+    successCallback?: () => void
+}) => {
     const dispatch = useAppDispatch()
 
     const uploadFile = async (e: FileUploadFileChangeDetails) => {
@@ -38,6 +44,7 @@ export const UploadField = ({ showFile = true }: { showFile?: boolean }) => {
                     ORDER BY Title, DateString ASC
                 `)
             await dispatch(syncNotes(notes[0].values))
+            if (successCallback) successCallback()
         } catch (e) {
             toaster.create({
                 title: `讀取失敗 (${e})`,

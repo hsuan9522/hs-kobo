@@ -19,7 +19,6 @@ import { dayjs } from '@/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { useEffect, useRef, useState } from 'react'
 import { BookDrawer } from '@/components/bookDrawer'
-import { UploadField } from '@/components/uploadField'
 
 const TODAY = dayjs()
 const currentYear = TODAY.year().toString()
@@ -132,7 +131,6 @@ const Calendar = () => {
             mx={{ xl: '20' }}
         >
             <Box w="full">
-                <UploadField></UploadField>
                 {selectedTitle && (
                     <BookDrawer
                         open={openDrawer}
