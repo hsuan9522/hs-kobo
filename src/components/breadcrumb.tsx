@@ -13,7 +13,9 @@ export const HBreadcrumb = () => {
                 <Breadcrumb.Root>
                     <Breadcrumb.List>
                         <Breadcrumb.Item>
-                            <LuHouse />
+                            <Breadcrumb.Link href="/">
+                                <LuHouse />
+                            </Breadcrumb.Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Separator>
                             <LiaSlashSolid />
