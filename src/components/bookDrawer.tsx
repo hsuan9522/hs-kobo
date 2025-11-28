@@ -14,7 +14,7 @@ import {
     Link,
 } from '@chakra-ui/react'
 import { Chart, useChart } from '@chakra-ui/charts'
-import { Area, AreaChart, CartesianGrid, Tooltip, XAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 import { LuNotebookPen, LuNotepadText } from 'react-icons/lu'
 import { Link as RouterLink } from 'react-router'
 
@@ -70,46 +70,56 @@ export const BookDrawer = ({
                             </DataList.Item>
                         </DataList.Root>
                         {/* 閱讀時間圖表 */}
-                        <Chart.Root maxH="3xs" chart={chart} pr="5" pt="5">
-                            <AreaChart data={chart.data}>
-                                <CartesianGrid
-                                    stroke={chart.color('border.muted')}
-                                    vertical={false}
-                                />
-                                <XAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    dataKey="date"
-                                    angle={30}
-                                    tickFormatter={chart.formatDate({
-                                        month: 'short',
-                                        day: 'numeric',
-                                    })}
-                                    textAnchor="start"
-                                />
-                                <Tooltip
-                                    cursor={false}
-                                    animationDuration={100}
-                                    content={
-                                        <Chart.Tooltip
-                                            formatter={(value) => `時數: ${formatToHrMin(value)}`}
-                                            hideSeriesLabel
+                        <Box w="full" h="210px" mb="4">
+                            <ResponsiveContainer
+                                width="100%"
+                                height="100%"
+                                initialDimension={{ width: 320, height: 200 }}
+                            >
+                                <Chart.Root chart={chart} pr="5" pt="5">
+                                    <AreaChart data={chart.data}>
+                                        <CartesianGrid
+                                            stroke={chart.color('border.muted')}
+                                            vertical={false}
                                         />
-                                    }
-                                />
-                                {chart.series.map((item) => (
-                                    <Area
-                                        key={item.name}
-                                        isAnimationActive={false}
-                                        dataKey={chart.key(item.name)}
-                                        fill={chart.color(item.color)}
-                                        fillOpacity={0.2}
-                                        stroke={chart.color(item.color)}
-                                        stackId="a"
-                                    />
-                                ))}
-                            </AreaChart>
-                        </Chart.Root>
+                                        <XAxis
+                                            axisLine={false}
+                                            tickLine={false}
+                                            dataKey="date"
+                                            angle={30}
+                                            tickFormatter={chart.formatDate({
+                                                month: 'short',
+                                                day: 'numeric',
+                                            })}
+                                            textAnchor="start"
+                                        />
+                                        <Tooltip
+                                            cursor={false}
+                                            animationDuration={100}
+                                            content={
+                                                <Chart.Tooltip
+                                                    formatter={(value) =>
+                                                        `時數: ${formatToHrMin(value)}`
+                                                    }
+                                                    hideSeriesLabel
+                                                />
+                                            }
+                                        />
+                                        {chart.series.map((item, idx) => (
+                                            <Area
+                                                key={`${item.name}-${idx}`}
+                                                isAnimationActive={false}
+                                                dataKey={chart.key(item.name)}
+                                                fill={chart.color(item.color)}
+                                                fillOpacity={0.2}
+                                                stroke={chart.color(item.color)}
+                                                stackId="a"
+                                            />
+                                        ))}
+                                    </AreaChart>
+                                </Chart.Root>
+                            </ResponsiveContainer>
+                        </Box>
                         {/* 筆記 */}
                         <Box pt="6" px="1">
                             <Flex align="center" gap="1">
@@ -118,8 +128,8 @@ export const BookDrawer = ({
                             </Flex>
                             <Separator my="2" />
                             <List.Root pl="4">
-                                {book.notes.slice(0, 3).map((item) => (
-                                    <List.Item key={item.date} py="1">
+                                {book.notes.slice(0, 3).map((item, idx) => (
+                                    <List.Item key={`${item.date}-${idx}`} py="2">
                                         {item.text}
                                     </List.Item>
                                 ))}
@@ -130,7 +140,7 @@ export const BookDrawer = ({
                                         // 用 as 之後，不知道為什麼 to 還是會報錯
                                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                         // @ts-expect-error
-                                        to="/notes"
+                                        to={`/notes/${bookId}`}
                                         as={RouterLink}
                                         color="gray.500"
                                         variant="underline"
