@@ -209,8 +209,11 @@ const Calendar = () => {
                 <Popover.Root
                     size="xs"
                     open={isPopoverOpen}
-                    onInteractOutside={() => {
-                        setIsPopoverOpen(false)
+                    onInteractOutside={(event) => {
+                        const target = (event.target as HTMLElement)?.getAttribute('data-scope')
+                        if (target !== 'popover') {
+                            setIsPopoverOpen(false)
+                        }
                     }}
                 >
                     <Popover.Trigger asChild>
