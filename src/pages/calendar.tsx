@@ -131,18 +131,16 @@ const Calendar = () => {
             px={{ xl: '20' }}
             mx={{ xl: '20' }}
         >
-            <Box w="full">
-                {selectedTitle && (
-                    <BookDrawer
-                        open={openDrawer}
-                        title={selectedTitle}
-                        onClose={() => {
-                            setOpenDrawer(false)
-                        }}
-                    />
-                )}
-                {/* <ColorPlatte /> */}
-            </Box>
+            {selectedTitle && (
+                <BookDrawer
+                    open={openDrawer}
+                    title={selectedTitle}
+                    onClose={() => {
+                        setOpenDrawer(false)
+                    }}
+                />
+            )}
+            {/* <ColorPlatte /> */}
             {/* <Box position="relative" w={{ md: '60%', base: '100%' }}>
                 {value && (
                     <Icon
