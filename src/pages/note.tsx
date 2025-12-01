@@ -4,18 +4,7 @@ import { useAppSelector } from '@/hooks/useRedux'
 import { useRoute } from '@/hooks/useRoute'
 import { NoteInfo } from '@/store/statistics.slice'
 // import { NoteType } from '@/types/enums'
-import {
-    Grid,
-    GridItem,
-    For,
-    Heading,
-    Em,
-    Show,
-    Text,
-    Separator,
-    Flex,
-    Box,
-} from '@chakra-ui/react'
+import { Grid, GridItem, For, Heading, Em, Show, Text, Flex, Box } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -34,11 +23,11 @@ const Note = () => {
         }
     }, [book, navigate])
 
-    // 計算內容權重（簡單的字數方法）
+    // 計算內容權重，句子文字比重較高，註解文字比重次之
     const getContentWeight = (note: NoteInfo) => {
         const textLength = note.text.length
-        const annotationLength = note.annotation.length
-        return textLength + annotationLength
+        const annotationLength = note.annotation.length ? note.annotation.length + 50 : 0
+        return textLength * 2 + annotationLength
     }
 
     // 貪心演算法：將卡片分配到目前較矮的欄位
@@ -55,7 +44,23 @@ const Note = () => {
         //     {
         //         text: '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
         //         annotation:
-        //             '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
+        //             '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
+        //         date: '2025-03-30',
+        //         type: NoteType.Note,
+        //         isoDate: '2025-03-30T12:07:25.538',
+        //     },
+        //     {
+        //         text: '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
+        //         annotation:
+        //             '我獨自遠行，不但沒有你，並且再自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我界全屬於我自己。',
+        //         date: '2025-03-30',
+        //         type: NoteType.Note,
+        //         isoDate: '2025-03-30T12:07:25.538',
+        //     },
+        //     {
+        //         text: '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
+        //         annotation:
+        //             '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
         //         date: '2025-03-30',
         //         type: NoteType.Note,
         //         isoDate: '2025-03-30T12:07:25.538',
@@ -70,7 +75,7 @@ const Note = () => {
         //     {
         //         text: '「蒼然暮色，自遠而至，至無所見而猶不欲歸。心凝形釋，與萬化冥合」',
         //         annotation: '',
-        //         date: '2025-04-16',
+        //         date: '2025-03-30',
         //         type: NoteType.Highlight,
         //         isoDate: '2025-04-16T13:48:57.299',
         //     },
@@ -100,14 +105,14 @@ const Note = () => {
         //         text: '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
         //         annotation:
         //             '我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。我獨自遠行，不但沒有你，並且再沒有別的影在黑暗裡。只有我被黑暗沉沒，那世界全屬於我自己。',
-        //         date: '2025-03-30',
+        //         date: '2025-04-16',
         //         type: NoteType.Note,
         //         isoDate: '2025-03-30T12:07:25.538',
         //     },
         //     {
         //         text: '無數個世界任憑我隨意出入，而這世界只是其中的一個罷了。',
         //         annotation: '',
-        //         date: '2025-03-30',
+        //         date: '2025-04-16',
         //         type: NoteType.Highlight,
         //         isoDate: '2025-03-30T12:08:29.196',
         //     },
@@ -165,10 +170,11 @@ const Note = () => {
         const right: NoteInfo[] = []
         let leftWeight = 0
         let rightWeight = 0
+        const noteLength = notes.length - 1
 
         notes.forEach((note: NoteInfo, idx) => {
             const weight = getContentWeight(note)
-            if (leftWeight <= rightWeight || idx === notes.length - 1) {
+            if (leftWeight <= rightWeight || idx === noteLength) {
                 left.push(note)
                 leftWeight += weight
             } else {
@@ -182,8 +188,8 @@ const Note = () => {
 
     return (
         <Show when={true}>
-            <Flex flexDirection="column" px="4" w="full" h="full" overflow="hidden">
-                <Heading mb="2" onClick={() => setOpenDrawer(!openDrawer)} cursor="pointer">
+            <Flex flexDirection="column" px="6" w="full" h="full" overflow="hidden">
+                <Heading mb="1" onClick={() => setOpenDrawer(!openDrawer)} cursor="pointer">
                     <Flex px="4" justifyContent="space-between">
                         <Text textDecoration="underline">《{book?.title || '夜晚的潛水艇'}》</Text>
                         <Box alignSelf="flex-end">
@@ -191,7 +197,6 @@ const Note = () => {
                         </Box>
                     </Flex>
                 </Heading>
-                <Separator />
                 {book?.title && (
                     <BookDrawer
                         title={book?.title}
@@ -200,16 +205,37 @@ const Note = () => {
                     />
                 )}
 
-                <Box flexGrow="1" overflow="auto" pt="4">
+                <Box
+                    flexGrow="1"
+                    overflow="auto"
+                    pt="28px"
+                    mt="-3"
+                    css={{
+                        maskImage:
+                            'linear-gradient(180deg,rgba(241, 241, 241, 0) 0.5%, rgba(241, 241, 241, 1) 9%)',
+                    }}
+                >
                     <Grid templateColumns="repeat(2, 1fr)" gapX={14} mb="14">
                         <GridItem>
                             <For each={left}>
-                                {(item, idx) => <NoteCollapse item={item} key={`note-${idx}`} />}
+                                {(item, idx) => (
+                                    <NoteCollapse
+                                        item={item}
+                                        key={`note-${idx}`}
+                                        separator={idx !== left.length - 1}
+                                    />
+                                )}
                             </For>
                         </GridItem>
                         <GridItem>
                             <For each={right}>
-                                {(item, idx) => <NoteCollapse item={item} key={`note-${idx}`} />}
+                                {(item, idx) => (
+                                    <NoteCollapse
+                                        item={item}
+                                        key={`note-${idx}`}
+                                        separator={idx !== right.length - 1}
+                                    />
+                                )}
                             </For>
                         </GridItem>
                     </Grid>

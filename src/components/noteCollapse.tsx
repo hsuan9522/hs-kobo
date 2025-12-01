@@ -1,10 +1,21 @@
 import { NoteInfo } from '@/store/statistics.slice'
 import { NoteType } from '@/types/enums'
-import { Box, Collapsible, Flex, Icon, Show, Text } from '@chakra-ui/react'
-import { LuPencil, LuPencilLine } from 'react-icons/lu'
+import {
+    Blockquote,
+    Box,
+    Circle,
+    Clipboard,
+    Collapsible,
+    Flex,
+    Float,
+    Icon,
+    Separator,
+    Show,
+    Text,
+} from '@chakra-ui/react'
+import { LuPencil, LuQuote } from 'react-icons/lu'
 
-const NoteCollapse = ({ item }: { item: NoteInfo }) => {
-
+const NoteCollapse = ({ item, separator = true }: { item: NoteInfo; separator?: boolean }) => {
     // 有選取文字時，就不要收合了
     const handleClick = (event: React.MouseEvent) => {
         const selectedText = window.getSelection()?.toString()
@@ -17,21 +28,12 @@ const NoteCollapse = ({ item }: { item: NoteInfo }) => {
 
     return (
         <Collapsible.Root unmountOnExit defaultOpen={item.type === NoteType.Note}>
-            <Collapsible.Trigger
-                paddingY="3"
-                textAlign="left"
-                as="div"
-                asChild
-                onClick={handleClick}
-            >
+            <Collapsible.Trigger pt="4" textAlign="left" as="div" asChild onClick={handleClick}>
                 <Flex gap="2">
                     <Box flexShrink="1">
-                        <Icon color="gray.400">
-                            {item.type === NoteType.Note ? (
-                                <LuPencilLine />
-                            ) : (
-                                <LuPencil />
-                            )}
+                        <Icon color="teal">
+                            {/* <FaPen /> */}
+                            <LuPencil strokeWidth="2.5" />
                         </Icon>
                     </Box>
                     <Text>{item.text}</Text>
@@ -39,17 +41,43 @@ const NoteCollapse = ({ item }: { item: NoteInfo }) => {
             </Collapsible.Trigger>
             <Show when={item.type === NoteType.Note}>
                 <Collapsible.Content>
-                    <Box
-                        padding="4"
-                        ml="5"
-                        mb="2"
-                        borderWidth="1px"
-                        rounded="lg"
-                        borderColor="gray.300"
-                    >
-                        {item.annotation}
-                    </Box>
+                    <Blockquote.Root mt="3" ml="5" mb="2" borderLeftColor="teal.600">
+                        <Float placement="middle-start">
+                            <Circle bg="teal.600" size="5">
+                                <Icon color="gray.100" fontSize="10px">
+                                    <LuQuote />
+                                </Icon>
+                            </Circle>
+                        </Float>
+                        <Blockquote.Content>{item.annotation}</Blockquote.Content>
+                    </Blockquote.Root>
                 </Collapsible.Content>
+            </Show>
+
+            <Text
+                textStyle="xs"
+                textAlign="right"
+                color="gray.400"
+                mb="4"
+                pt="2px"
+                cursor="default"
+                as="div"
+            >
+                <Flex justifyContent="flex-end" alignItems="center" gap="1">
+                    <Clipboard.Root
+                        asChild
+                        value={item.annotation ? `${item.text}\n\n${item.annotation}` : item.text}
+                        cursor="pointer"
+                    >
+                        <Clipboard.Trigger>
+                            <Clipboard.Indicator />
+                        </Clipboard.Trigger>
+                    </Clipboard.Root>
+                    {item.date}
+                </Flex>
+            </Text>
+            <Show when={separator}>
+                <Separator variant="dashed" size="md" />
             </Show>
         </Collapsible.Root>
     )
