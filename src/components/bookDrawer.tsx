@@ -98,29 +98,24 @@ export const BookDrawer = ({
                                             animationDuration={100}
                                             content={
                                                 <Chart.Tooltip
-                                                    formatter={(value: number) =>
+                                                    formatter={(value) =>
                                                         `時數: ${formatToHrMin(value)}`
                                                     }
                                                     hideSeriesLabel
                                                 />
                                             }
                                         />
-                                        {chart.series.map(
-                                            (
-                                                item: { name: string; color: string },
-                                                idx: number
-                                            ) => (
-                                                <Area
-                                                    key={`${item.name}-${idx}`}
-                                                    isAnimationActive={false}
-                                                    dataKey={chart.key(item.name)}
-                                                    fill={chart.color(item.color)}
-                                                    fillOpacity={0.2}
-                                                    stroke={chart.color(item.color)}
-                                                    stackId="a"
-                                                />
-                                            )
-                                        )}
+                                        {chart.series.map((item, idx) => (
+                                            <Area
+                                                key={`${item.name}-${idx}`}
+                                                isAnimationActive={false}
+                                                dataKey={chart.key(item.name)}
+                                                fill={chart.color(item.color)}
+                                                fillOpacity={0.2}
+                                                stroke={chart.color(item.color)}
+                                                stackId="a"
+                                            />
+                                        ))}
                                     </AreaChart>
                                 </Chart.Root>
                             </ResponsiveContainer>
