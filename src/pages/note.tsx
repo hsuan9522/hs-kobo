@@ -4,9 +4,25 @@ import { useAppSelector } from '@/hooks/useRedux'
 import { useRoute } from '@/hooks/useRoute'
 import { NoteInfo } from '@/store/statistics.slice'
 // import { NoteType } from '@/types/enums'
-import { Grid, GridItem, For, Heading, Em, Show, Text, Flex, Box } from '@chakra-ui/react'
+import {
+    Grid,
+    GridItem,
+    For,
+    Heading,
+    Em,
+    Show,
+    Text,
+    Flex,
+    Box,
+    ActionBar,
+    Portal,
+    DownloadTrigger,
+    IconButton,
+} from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
+import { LuDownload } from 'react-icons/lu'
 import { useNavigate } from 'react-router'
+import useGeneratePdf from '@/hooks/useGeneratePdf'
 
 const Note = () => {
     const { routerParams } = useRoute()
@@ -186,6 +202,12 @@ const Note = () => {
         return { left, right }
     }, [book])
 
+    const { generatePDF, downloadLoading } = useGeneratePdf({
+        title: book?.title,
+        author: book?.author,
+        notes: book?.notes,
+    })
+
     return (
         <Show when={true}>
             <Flex flexDirection="column" px="6" w="full" h="full" overflow="hidden">
@@ -204,7 +226,6 @@ const Note = () => {
                         onClose={() => setOpenDrawer(false)}
                     />
                 )}
-
                 <Box
                     flexGrow="1"
                     overflow="auto"
@@ -241,6 +262,29 @@ const Note = () => {
                     </Grid>
                 </Box>
             </Flex>
+            <ActionBar.Root open={true}>
+                <Portal>
+                    <ActionBar.Positioner justifyContent="flex-end" pr="6">
+                        <ActionBar.Content rounded="full" p="1">
+                            <DownloadTrigger
+                                data={generatePDF}
+                                mimeType="application/pdf"
+                                fileName="d.pdf"
+                                as="div"
+                            >
+                                <IconButton
+                                    rounded="full"
+                                    variant="ghost"
+                                    size="sm"
+                                    loading={downloadLoading}
+                                >
+                                    <LuDownload />
+                                </IconButton>
+                            </DownloadTrigger>
+                        </ActionBar.Content>
+                    </ActionBar.Positioner>
+                </Portal>
+            </ActionBar.Root>
         </Show>
     )
 }
