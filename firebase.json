@@ -1,0 +1,23 @@
+{
+    "hosting": {
+        "public": "public",
+        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+        "predeploy": [
+            "pnpm run build",
+            "rm -rf public/hs-kobo && mkdir -p public/hs-kobo && cp -r dist/* public/hs-kobo/"
+        ],
+        "redirects": [
+            {
+                "source": "/",
+                "destination": "https://medium.com/@hsuan9522",
+                "type": 301
+            }
+        ],
+        "rewrites": [
+            {
+                "source": "/hs-kobo/**",
+                "destination": "/hs-kobo/index.html"
+            }
+        ]
+    }
+}

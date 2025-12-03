@@ -3,17 +3,24 @@ import { createBrowserRouter } from 'react-router'
 import { lazy, Suspense } from 'react'
 import BaseLayout from '@/layout/base'
 import SuspenseWrapper from '@/components/suspenseWrapper'
+import PageLoader from '@/components/pageLoader'
 
-const PageLoader = lazy(() => import('@/components/pageLoader'))
-const Home = lazy(() => import('@/pages/home'))
-const Calendar = lazy(() => import('@/pages/calendar'))
-const Notes = lazy(() => import('@/pages/notes'))
-const Note = lazy(() => import('@/pages/note'))
+// const Home = lazy(() => import('@/pages/home'))
+// const Calendar = lazy(() => import('@/pages/calendar'))
+// const Notes = lazy(() => import('@/pages/notes'))
+// const Note = lazy(() => import('@/pages/note'))
 const Error = lazy(() => import('@/pages/404'))
 
+const element = {
+    home: lazy(() => import('@/pages/home')),
+    calendar: lazy(() => import('@/pages/calendar')),
+    notes: lazy(() => import('@/pages/notes')),
+    note: lazy(() => import('@/pages/note')),
+}
+
 export const routerInfo = [
-    { label: 'Home', path: '', icon: LuHouse, element: Home },
-    { label: 'Calendar', path: 'calendar', icon: LuCalendarDays, element: Calendar },
+    { label: 'Home', path: '', icon: LuHouse, name: 'home' },
+    { label: 'Calendar', path: 'calendar', icon: LuCalendarDays, name: 'calendar' },
     {
         label: 'Notes',
         path: 'notes',
@@ -21,11 +28,11 @@ export const routerInfo = [
         children: [
             {
                 index: true,
-                element: Notes,
+                name: 'notes',
             },
             {
                 path: ':bookId',
-                element: Note,
+                name: 'note',
             },
         ],
     },
@@ -48,13 +55,21 @@ const router = createBrowserRouter(
                         children: item.children.map((child) => ({
                             index: child.index,
                             path: child.path,
-                            element: <SuspenseWrapper Component={child.element} />,
+                            element: (
+                                <SuspenseWrapper
+                                    Component={element[child.name as keyof typeof element]}
+                                />
+                            ),
                         })),
                     }
                 } else {
                     return {
                         path: item.path,
-                        element: <SuspenseWrapper Component={item.element} />,
+                        element: (
+                            <SuspenseWrapper
+                                Component={element[item.name as keyof typeof element]}
+                            />
+                        ),
                     }
                 }
             }),
@@ -68,7 +83,9 @@ const router = createBrowserRouter(
             ),
         },
     ],
-    { basename: '/hs-kobo' }
+    {
+        basename: '/hs-kobo',
+    }
 )
 
 export default router
