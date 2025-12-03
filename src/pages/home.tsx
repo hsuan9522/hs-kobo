@@ -18,7 +18,6 @@ const Home = () => {
                 align="center"
                 justifyContent="center"
                 gap="4"
-                pb="70px"
                 direction="column"
             >
                 <chakra.svg fill="gray.600" width="full" height="300px">

@@ -21,10 +21,14 @@ const BaseLayout = () => {
                 id="router_view"
                 w="full"
                 flexGrow="1"
-                overflow="hidden"
+                display="flex"
+                overflow={{ md: 'hidden', base: 'auto' }}
+                pb={{ md: '0', base: '10' }}
+                mb={{ md: '80px', base: '0' }}
+                alignItems={{ md: 'center', base: 'flex-start' }}
                 css={{
                     maskImage:
-                        'linear-gradient(0deg,rgba(241, 241, 241, 0) 1%, rgba(241, 241, 241, 1) 15%)',
+                        'linear-gradient(0deg,rgba(241, 241, 241, 0) 1%, rgba(241, 241, 241, 1) 15%);',
                 }}
             >
                 <Outlet />

@@ -31,7 +31,7 @@ export default function useGeneratePdf({ title, author, notes }: { title: string
         }, '')
 
         const htmlContent = `
-            <div style="font-family:  NotoSansTC-Regular; width: 800px; padding: 30px; margin: 0;">
+            <div style="font-family: NotoSansTC-Regular; width: 800px; padding: 30px 40px; margin: 0;">
                 <h3 style="margin-bottom: 20px; font-size: 18px;">《${title}》 ──&emsp;<small style="font-size: 16px; color: #666;">${author}</small></h3>
                 <div style="font-size: 14px;">
                     ${notesString}

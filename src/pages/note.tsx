@@ -211,9 +211,15 @@ const Note = () => {
     return (
         <Show when={true}>
             <Flex flexDirection="column" px="6" w="full" h="full" overflow="hidden">
-                <Heading mb="1" onClick={() => setOpenDrawer(!openDrawer)} cursor="pointer">
+                <Heading mb="1">
                     <Flex px="4" justifyContent="space-between">
-                        <Text textDecoration="underline">《{book?.title || '夜晚的潛水艇'}》</Text>
+                        <Text
+                            textDecoration="underline"
+                            onClick={() => setOpenDrawer(!openDrawer)}
+                            cursor="pointer"
+                        >
+                            《{book?.title || '夜晚的潛水艇'}》
+                        </Text>
                         <Box alignSelf="flex-end">
                             ── <Em textStyle="md">{book?.author || '程春成'}</Em>
                         </Box>
