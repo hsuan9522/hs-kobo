@@ -54,6 +54,7 @@ const Calendar = () => {
     const isInitial = useRef(true)
     const [openDrawer, setOpenDrawer] = useState(false)
     const [selectedTitle, setSelectedTitle] = useState('')
+    const [inInteraction, setInInteraction] = useState(false)
 
     useEffect(() => {
         if (calendarRef.current && events.length) {
@@ -141,36 +142,8 @@ const Calendar = () => {
                 />
             )}
             {/* <ColorPlatte /> */}
-            {/* <Box position="relative" w={{ md: '60%', base: '100%' }}>
-                {value && (
-                    <Icon
-                        position="absolute"
-                        right="84px"
-                        top="50%"
-                        translate="0 -50%"
-                        color="gray.400"
-                        zIndex="1"
-                        onClick={() => setValue('')}
-                    >
-                        <LuX />
-                    </Icon>
-                )}
-                <Group attached w="full">
-                    <Input
-                        value={value}
-                        flex="1"
-                        pr="6"
-                        borderColor="gray.300"
-                        placeholder="Enter your url"
-                        onChange={(e) => {
-                            setValue(e.currentTarget.value)
-                        }}
-                    />
-                    <Button onClick={submit}>Submit</Button>
-                </Group>
-            </Box> */}
-            <Box w="full" h="full" flexGrow={1} overflow="hidden" padding={1}>
-                <Box overflow="auto" w="full" h="full">
+            <Box w="full" h="full" flexGrow={1} overflow="hidden" padding="1">
+                <Box overflow="auto" w="full" h="full" p="1">
                     <FullCalendar
                         ref={calendarRef}
                         initialDate={TODAY.subtract(1, 'month')
@@ -208,14 +181,19 @@ const Calendar = () => {
                     size="xs"
                     open={isPopoverOpen}
                     onInteractOutside={(event) => {
-                        const target = (event.target as HTMLElement)?.getAttribute('data-scope')
-                        if (target !== 'popover') {
-                            setIsPopoverOpen(false)
+                        setIsPopoverOpen(false)
+                        const target = (event.detail.target as HTMLElement).getAttribute('title')
+                        if (target === 'Jump' && !inInteraction) {
+                            setInInteraction(true)
+                            setTimeout(() => {
+                                setIsPopoverOpen(!isPopoverOpen)
+                                setInInteraction(false)
+                            }, 200)
                         }
                     }}
                 >
                     <Popover.Trigger asChild>
-                        <Button zIndex={-1}></Button>
+                        <Button zIndex={-1} height="34px"></Button>
                     </Popover.Trigger>
                     <Portal>
                         <Popover.Positioner>
