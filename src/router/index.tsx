@@ -1,11 +1,15 @@
 import { LuCalendarDays, LuNotebook, LuHouse } from 'react-icons/lu'
 import { createBrowserRouter } from 'react-router'
+import { lazy, Suspense } from 'react'
 import BaseLayout from '@/layout/base'
-import Calendar from '@/pages/calendar'
-import Home from '@/pages/home'
-import Notes from '@/pages/notes'
-import Error from '@/pages/404'
-import Note from '@/pages/note'
+import SuspenseWrapper from '@/components/suspenseWrapper'
+
+const PageLoader = lazy(() => import('@/components/pageLoader'))
+const Home = lazy(() => import('@/pages/home'))
+const Calendar = lazy(() => import('@/pages/calendar'))
+const Notes = lazy(() => import('@/pages/notes'))
+const Note = lazy(() => import('@/pages/note'))
+const Error = lazy(() => import('@/pages/404'))
 
 export const routerInfo = [
     { label: 'Home', path: '', icon: LuHouse, element: Home },
@@ -27,32 +31,44 @@ export const routerInfo = [
     },
 ]
 
-const router = createBrowserRouter([
-    {
-        path: '/',
-        Component: BaseLayout,
-        children: routerInfo.map((item) => {
-            if (item.children) {
-                return {
-                    path: item.path,
-                    children: item.children.map((child) => ({
-                        index: child.index,
-                        path: child.path,
-                        Component: child.element,
-                    })),
+const router = createBrowserRouter(
+    [
+        {
+            path: '',
+            Component: BaseLayout,
+            errorElement: (
+                <Suspense fallback={<PageLoader />}>
+                    <Error />
+                </Suspense>
+            ),
+            children: routerInfo.map((item) => {
+                if (item.children) {
+                    return {
+                        path: item.path,
+                        children: item.children.map((child) => ({
+                            index: child.index,
+                            path: child.path,
+                            element: <SuspenseWrapper Component={child.element} />,
+                        })),
+                    }
+                } else {
+                    return {
+                        path: item.path,
+                        element: <SuspenseWrapper Component={item.element} />,
+                    }
                 }
-            } else {
-                return {
-                    path: item.path,
-                    Component: item.element,
-                }
-            }
-        }),
-    },
-    {
-        path: '*',
-        Component: Error,
-    },
-])
+            }),
+        },
+        {
+            path: '*',
+            element: (
+                <Suspense fallback={<PageLoader />}>
+                    <Error />
+                </Suspense>
+            ),
+        },
+    ],
+    { basename: '/hs-kobo' }
+)
 
 export default router

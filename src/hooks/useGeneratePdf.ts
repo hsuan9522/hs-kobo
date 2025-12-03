@@ -1,6 +1,7 @@
 import { NoteInfo } from "@/store/statistics.slice";
 import jsPDF from "jspdf";
 import { useState } from "react";
+import '@/utils/jsPDFfont'
 
 export default function useGeneratePdf({ title, author, notes }: { title: string, author: string, notes: NoteInfo[] }) {
 
