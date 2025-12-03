@@ -1,7 +1,7 @@
 {
     "name": "hs-kobo",
     "private": true,
-    "homepage": "https://cjhsuan.com/hs-kobo",
+    "homepage": "https://cjhsuan.com",
     "version": "0.0.0",
     "type": "module",
     "scripts": {
