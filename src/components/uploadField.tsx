@@ -5,10 +5,10 @@ import { FileUpload, HStack, Button, FileUploadFileChangeDetails, Box } from '@c
 import { LuUpload } from 'react-icons/lu'
 import { toaster } from '@/components/ui/toaster'
 import initSqlJs from 'sql.js'
-import { setFile } from '@/store/common.slice'
+import { setFile, setIsKoboDataBase } from '@/store/common.slice'
 
 export const UploadField = ({
-    showFile = true,
+    showFile = false,
     successCallback,
 }: {
     showFile?: boolean
@@ -27,7 +27,28 @@ export const UploadField = ({
             const unitArray = new Uint8Array(arrayBuffer)
 
             const db = new SQL.Database(unitArray)
-            const res = db.exec(`
+
+            const isKoboDatabase = !db.exec(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='Analytics';"
+            )[0]
+            dispatch(setIsKoboDataBase(isKoboDatabase))
+
+            let notes = []
+            if (isKoboDatabase) {
+                notes = db.exec(`
+                    SELECT c.title AS Title, b.DateCreated, b.Text, b.Annotation, b.Type,
+                    strftime('%Y-%m-%d', b.DateCreated, 'localtime') AS DateString,
+                    c.Attribution AS Author
+                    FROM bookmark AS b
+                    JOIN content AS c
+                    ON b.VolumeID = c.ContentID
+                    WHERE b.Text IS NOT NULL
+                    OR b.Type != 'dogear'
+                    ORDER BY Title,
+                    DateString ASC;
+                `)
+            } else {
+                const res = db.exec(`
                     SELECT Date, Title, Author,
                     CAST(printf('%.1f', SUM(ReadingTime) / 60.0) AS REAL) AS TotalMinutesRead
                     FROM Analytics
@@ -35,15 +56,16 @@ export const UploadField = ({
                     HAVING TotalMinutesRead >= 1;
                 `)
 
-            await dispatch(formatStatistics(res[0].values))
+                await dispatch(formatStatistics(res[0].values))
 
-            const notes = db.exec(`
+                notes = db.exec(`
                     SELECT Title, DateCreated, Text, Annotation, Type,
                     strftime( '%Y-%m-%d',DateCreated, 'localtime') as DateString 
                     FROM Bookmark 
                     WHERE Text is NOT NULL OR Type != 'dogear'
                     ORDER BY Title, DateString ASC
                 `)
+            }
             await dispatch(syncNotes(notes[0].values))
             dispatch(setFile(file.name))
             if (successCallback) successCallback()
@@ -52,6 +74,7 @@ export const UploadField = ({
                 title: `讀取失敗 (${e})`,
                 type: 'error',
             })
+            console.log(e)
         } finally {
             dispatch(endLoading())
         }

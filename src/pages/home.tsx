@@ -1,13 +1,20 @@
 import Logo from '@/assets/logo.svg?react'
 import { TextTyping } from '@/components/textTyping'
 import { UploadField } from '@/components/uploadField'
+import { useAppSelector } from '@/hooks/useRedux'
 import { chakra, Flex } from '@chakra-ui/react'
 import { useNavigate } from 'react-router'
 
 const Home = () => {
     const navigate = useNavigate()
+    const { isKoboDataBase } = useAppSelector((state) => state.common)
+
     const uploadSuccess = () => {
-        navigate('/calendar')
+        if (isKoboDataBase) {
+            navigate('/notes')
+        } else {
+            navigate('/calendar')
+        }
     }
 
     return (
@@ -28,7 +35,7 @@ const Home = () => {
                     animation={true}
                 ></TextTyping>
                 <Flex justifyContent="center">
-                    <UploadField showFile={false} successCallback={uploadSuccess}></UploadField>
+                    <UploadField successCallback={uploadSuccess}></UploadField>
                 </Flex>
             </Flex>
         </>

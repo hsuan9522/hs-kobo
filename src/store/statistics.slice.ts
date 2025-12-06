@@ -137,10 +137,10 @@ export const formatStatistics = createAsyncThunk<State, initSqlJs.SqlValue[][], 
     }
 )
 
-export const syncNotes = createAsyncThunk<BookInfo[], initSqlJs.SqlValue[][], { state: RootState }>(
+export const syncNotes = createAsyncThunk<{ books: BookInfo[]; bookIdMap: Record<string, number> }, initSqlJs.SqlValue[][], { state: RootState }>(
     'statistics/syncNotes',
     async (data: initSqlJs.SqlValue[][], { dispatch, rejectWithValue, getState }) => {
-        const books = cloneDeep(getState().statistics.books) //因為 state 不能隨意變更，所以要先 deepclone
+        const books = cloneDeep(getState().statistics.books) // 因為 state 不能隨意變更，所以要先 deepclone
         const bookIdMap = getState().statistics.bookIdMap
 
         try {
@@ -153,7 +153,9 @@ export const syncNotes = createAsyncThunk<BookInfo[], initSqlJs.SqlValue[][], { 
              * 3: Annotation(筆記內容)
              * 4: Type
              * 5: DateString(1 轉換為當地日期字串)
+             * 6: Author(只有是 kobo 數據庫才有)
              */
+            const newBookIdMap: Record<string, number> = {}
             data.forEach((item) => {
                 const title = item[0] as string
                 const id = bookIdMap[title]
@@ -170,9 +172,35 @@ export const syncNotes = createAsyncThunk<BookInfo[], initSqlJs.SqlValue[][], { 
                         type: item[4] as NoteType,
                         isoDate: item[1] as string,
                     })
+                } else {
+                    if (typeof newBookIdMap[title] !== 'number') {
+                        const newId = Object.keys(bookIdMap).length + Object.keys(newBookIdMap).length
+                        newBookIdMap[title] = newId
+                        books[newId] = {
+                            title: item[0] as string,
+                            author: item[6] as string,
+                            totalMinutes: 0,
+                            startDate: '',
+                            lastDate: '',
+                            days: 0,
+                            color: '',
+                            border: '',
+                            data: [],
+                            notes: [],
+                        }
+                    }
+                    const existId = newBookIdMap[title]
+
+                    books[existId].notes.push({
+                        text: item[2] as string,
+                        annotation: item[3] as string,
+                        date: item[5] as string,
+                        type: item[4] as NoteType,
+                        isoDate: item[1] as string,
+                    })
                 }
             })
-            return books
+            return { books, bookIdMap: newBookIdMap }
         } catch (e) {
             return rejectWithValue(e)
         } finally {
@@ -203,7 +231,8 @@ const statisticsSlice = createSlice({
                 state.bookIdMap = {}
             })
             .addCase(syncNotes.fulfilled, (state, action) => {
-                state.books = action.payload
+                state.books = action.payload.books
+                state.bookIdMap = { ...state.bookIdMap, ...action.payload.bookIdMap }
             })
     },
 })

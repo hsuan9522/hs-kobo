@@ -26,6 +26,7 @@ const initialState = {
         '#8A5E3C',
     ],
     filename: '',
+    isKoboDataBase: true,
 }
 
 const commonSlice = createSlice({
@@ -34,10 +35,13 @@ const commonSlice = createSlice({
     reducers: {
         setFile: (state, action) => {
             state.filename = action.payload
-        }
+        },
+        setIsKoboDataBase: (state, action) => {
+            state.isKoboDataBase = action.payload
+        },
     }
 })
 
-export const { setFile } = commonSlice.actions
+export const { setFile, setIsKoboDataBase } = commonSlice.actions
 
 export default commonSlice.reducer
