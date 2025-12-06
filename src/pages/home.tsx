@@ -27,14 +27,14 @@ const Home = () => {
                 gap="4"
                 direction="column"
             >
-                <chakra.svg fill="gray.600" width="full" height="300px">
+                <chakra.svg fill="gray.600" width="full" height={{ base: '180px', md: '400px' }}>
                     <Logo />
                 </chakra.svg>
                 <TextTyping
                     text="Upload your .sqlite file to get started"
                     animation={true}
                 ></TextTyping>
-                <Flex justifyContent="center">
+                <Flex justifyContent="center" mb="20">
                     <UploadField successCallback={uploadSuccess}></UploadField>
                 </Flex>
             </Flex>
