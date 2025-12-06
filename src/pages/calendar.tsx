@@ -142,7 +142,14 @@ const Calendar = () => {
                 />
             )}
             {/* <ColorPlatte /> */}
-            <Box w="full" h="full" flexGrow={1} overflow="hidden" padding="1">
+            <Box
+                w="full"
+                h="full"
+                flexGrow={1}
+                overflow="hidden"
+                p="1"
+                pb={{ base: '20', md: '0' }}
+            >
                 <Box overflow="auto" w="full" h="full" p="1">
                     <FullCalendar
                         ref={calendarRef}

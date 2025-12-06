@@ -68,6 +68,7 @@ const NoteCollapse = ({ item, separator = true }: { item: NoteInfo; separator?: 
                         asChild
                         value={item.annotation ? `${item.text}\n\n${item.annotation}` : item.text}
                         cursor="pointer"
+                        _hover={{ color: 'teal.700' }}
                     >
                         <Clipboard.Trigger>
                             <Clipboard.Indicator />

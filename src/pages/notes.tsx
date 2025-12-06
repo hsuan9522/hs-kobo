@@ -20,7 +20,7 @@ const Notes = () => {
             w="full"
             h="full"
             overflow="auto"
-            mt={{ base: '4', md: '8' }}
+            mt={{ base: '4', md: '3' }}
             px={{ base: '2', md: '6' }}
             pb="12"
         >

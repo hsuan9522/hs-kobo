@@ -13,7 +13,7 @@ const BaseLayout = () => {
 
     return (
         <Flex p={{ md: '8', base: '4' }} h="full" w="full" flexDir="column" overflow="hidden">
-            <Flex w="full" justify="space-between" align="center" pb={{ xl: '4', base: '2' }}>
+            <Flex w="full" justify="space-between" align="center" pb="4" minH="70px">
                 <HBreadcrumb />
                 {location.pathname === '/' || hasParams ? <></> : <UploadField />}
             </Flex>
@@ -22,16 +22,16 @@ const BaseLayout = () => {
                 w="full"
                 flexGrow="1"
                 display="flex"
-                overflow={{ md: 'hidden', base: 'auto' }}
-                pb={{ md: '0', base: '10' }}
-                mb={{ md: '80px', base: '0' }}
+                overflow="hidden"
                 alignItems={{ md: 'center', base: 'flex-start' }}
                 css={{
                     maskImage:
                         'linear-gradient(0deg,rgba(241, 241, 241, 0) 1%, rgba(241, 241, 241, 1) 15%);',
                 }}
             >
-                <Outlet />
+                <Box w="full" h="full" overflow={{ md: 'hidden', base: 'auto' }}>
+                    <Outlet />
+                </Box>
             </Box>
             <Menu />
         </Flex>
